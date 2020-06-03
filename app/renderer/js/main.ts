@@ -215,7 +215,15 @@ class ServerManagerView {
 		if (process.platform === 'win32') {
 			// Only available on Windows
 			settingOptions.flashTaskbarOnMessage = true;
+			settingOptions.openToBackgroundFromTray = true;
 			settingOptions.dndPreviousSettings.flashTaskbarOnMessage = true;
+			settingOptions.dndPreviousSettings.openToBackgroundFromTray = true;
+		}
+
+		if (process.platform === 'linux') {
+			// Not needed on windows as there is the flash-taskbar feature
+			settingOptions.popUpOnMessage = false;
+			settingOptions.dndPreviousSettings.popUpOnMessage = false;
 		}
 
 		if (process.platform === 'darwin') {

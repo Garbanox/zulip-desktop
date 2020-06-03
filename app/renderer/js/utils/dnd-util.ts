@@ -1,11 +1,13 @@
 import * as ConfigUtil from './config-util';
 
-type SettingName = 'showNotification' | 'silent' | 'flashTaskbarOnMessage';
+type SettingName = 'showNotification' | 'silent' | 'flashTaskbarOnMessage' | 'openToBackgroundFromTray' | 'popUpOnMessage';
 
 export interface DNDSettings {
 	showNotification?: boolean;
 	silent?: boolean;
 	flashTaskbarOnMessage?: boolean;
+	openToBackgroundFromTray?: boolean;
+	popUpOnMessage?: boolean;
 }
 
 interface Toggle {
@@ -18,6 +20,11 @@ export function toggle(): Toggle {
 	const dndSettingList: SettingName[] = ['showNotification', 'silent'];
 	if (process.platform === 'win32') {
 		dndSettingList.push('flashTaskbarOnMessage');
+		dndSettingList.push('openToBackgroundFromTray');
+	}
+
+	if (process.platform === 'linux') {
+		dndSettingList.push('popUpOnMessage');
 	}
 
 	let newSettings: DNDSettings;

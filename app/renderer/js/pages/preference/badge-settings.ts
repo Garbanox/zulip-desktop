@@ -3,7 +3,34 @@ import electron, {app} from 'electron';
 import * as ConfigUtil from '../../utils/config-util';
 
 function showBadgeCount(messageCount: number, mainWindow: electron.BrowserWindow): void {
+	if (process.platform === 'linux') {
+		if (ConfigUtil.getConfigItem('popUpOnMessage', false)) {
+			if (mainWindow.isVisible() && !mainWindow.isFocused()) {
+				mainWindow.setVisibleOnAllWorkspaces(true);
+				mainWindow.moveTop();
+				mainWindow.setVisibleOnAllWorkspaces(false);
+			}
+
+			if (!mainWindow.isVisible()) { // When closed to tray or minimized
+				mainWindow.setVisibleOnAllWorkspaces(true);
+				mainWindow.show();
+				mainWindow.once('focus', () => {
+					mainWindow.blur();
+					mainWindow.showInactive();
+					mainWindow.moveTop();
+					mainWindow.setVisibleOnAllWorkspaces(false);
+				});
+			}
+		}
+	}
+
 	if (process.platform === 'win32') {
+		if (ConfigUtil.getConfigItem('openToBackgroundFromTray', false)) {
+			if (!mainWindow.isVisible()) {
+				mainWindow.showInactive();
+			}
+		}
+
 		updateOverlayIcon(messageCount, mainWindow);
 	} else {
 		app.badgeCount = messageCount;
