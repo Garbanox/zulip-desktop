@@ -52,6 +52,14 @@ export default class GeneralSection extends BaseSection {
 						<div class="setting-description">${t.__('Flash taskbar on new message')}</div>
 						<div class="setting-control"></div>
 					</div>
+					<div class="setting-row" id="openToBackgroundFromTray-option" style= "display:${process.platform === 'win32' ? '' : 'none'}">
+						<div class="setting-description">${t.__('Flash taskbar on new message even when in tray')}</div>
+						<div class="setting-control"></div>
+					</div>
+					<div class="setting-row" id="popUpOnMessage-option" style= "display:${process.platform === 'linux' ? '' : 'none'}">
+						<div class="setting-description">${t.__('Popup on new message')}</div>
+						<div class="setting-control"></div>
+					</div>
 				</div>
 				<div class="title">${t.__('Desktop Notifications')}</div>
 				<div class="settings-card">
@@ -169,6 +177,8 @@ export default class GeneralSection extends BaseSection {
 		this.downloadFolder();
 		this.updateQuitOnCloseOption();
 		this.updatePromptDownloadOption();
+		this.updateOpenToBackgroundFromTray();
+		this.updatePopUpOnMessage();
 		this.enableErrorReporting();
 		this.setLocale();
 
@@ -249,6 +259,30 @@ export default class GeneralSection extends BaseSection {
 				const newValue = !ConfigUtil.getConfigItem('flashTaskbarOnMessage');
 				ConfigUtil.setConfigItem('flashTaskbarOnMessage', newValue);
 				this.updateFlashTaskbar();
+			}
+		});
+	}
+
+	updateOpenToBackgroundFromTray(): void {
+		this.generateSettingOption({
+			$element: document.querySelector('#openToBackgroundFromTray-option .setting-control'),
+			value: ConfigUtil.getConfigItem('openToBackgroundFromTray', true),
+			clickHandler: () => {
+				const newValue = !ConfigUtil.getConfigItem('openToBackgroundFromTray');
+				ConfigUtil.setConfigItem('openToBackgroundFromTray', newValue);
+				this.updateOpenToBackgroundFromTray();
+			}
+		});
+	}
+
+	updatePopUpOnMessage(): void {
+		this.generateSettingOption({
+			$element: document.querySelector('#popUpOnMessage-option .setting-control'),
+			value: ConfigUtil.getConfigItem('popUpOnMessage', true),
+			clickHandler: () => {
+				const newValue = !ConfigUtil.getConfigItem('popUpOnMessage');
+				ConfigUtil.setConfigItem('popUpOnMessage', newValue);
+				this.updatePopUpOnMessage();
 			}
 		});
 	}
