@@ -1,5 +1,5 @@
 
-import electron, {app, dialog, ipcMain, session} from 'electron';
+import electron, {app, dialog, ipcMain, session, globalShortcut} from 'electron';
 import fs from 'fs';
 import path from 'path';
 
@@ -143,6 +143,21 @@ function createMainWindow(): Electron.BrowserWindow {
 	return win;
 }
 
+// Toggle global shortcut
+const toggleGlobalShortcut = (): void => {
+	if (ConfigUtil.getConfigItem('globalShortcut')) {
+		const returnValue = globalShortcut.register('CommandOrControl+Alt+Shift+Z', () => {
+			mainWindow.show();
+		});
+
+		if (!returnValue) {
+			console.log('registration failed');
+		}
+	} else {
+		globalShortcut.unregister('CommandOrControl+Alt+Shift+Z');
+	}
+};
+
 // Decrease load on GPU (experimental)
 app.disableHardwareAcceleration();
 
@@ -171,6 +186,8 @@ app.on('ready', () => {
 		tabs: []
 	});
 	mainWindow = createMainWindow();
+
+	toggleGlobalShortcut();
 
 	// Auto-hide menu bar on Windows + Linux
 	if (process.platform !== 'darwin') {
@@ -329,6 +346,10 @@ ${error}`
 
 	ipcMain.on('toggle-badge-option', () => {
 		BadgeSettings.updateBadge(badgeCount, mainWindow);
+	});
+
+	ipcMain.on('toggle-global-shortcut', () => {
+		toggleGlobalShortcut();
 	});
 
 	ipcMain.on('toggle-menubar', (_event: Electron.IpcMainEvent, showMenubar: boolean) => {

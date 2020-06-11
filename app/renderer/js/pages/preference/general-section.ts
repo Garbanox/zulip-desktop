@@ -104,6 +104,10 @@ export default class GeneralSection extends BaseSection {
 						<div class="setting-description">${t.__('Enable spellchecker (requires restart)')}</div>
 						<div class="setting-control"></div>
 					</div>
+					<div class="setting-row" id="globalShortcut-option">
+						<div class="setting-description">${t.__('Ctrl-Alt-Shift-Z to open Zulip')}</div>
+						<div class="setting-control"></div>
+					</div>
 					<div class="setting-row" id="spellcheck-langs" style= "display:${process.platform === 'darwin' ? 'none' : ''}"></div>
 					<div class="setting-row" id="note"></div>
 				</div>
@@ -185,6 +189,7 @@ export default class GeneralSection extends BaseSection {
 		this.updatePromptDownloadOption();
 		this.updateOpenToBackgroundFromTray();
 		this.updatePopUpOnMessage();
+		this.updateGlobalShortcut();
 		this.enableErrorReporting();
 		this.setLocale();
 		this.initSpellChecker();
@@ -290,6 +295,19 @@ export default class GeneralSection extends BaseSection {
 				const newValue = !ConfigUtil.getConfigItem('popUpOnMessage');
 				ConfigUtil.setConfigItem('popUpOnMessage', newValue);
 				this.updatePopUpOnMessage();
+			}
+		});
+	}
+
+	updateGlobalShortcut(): void {
+		this.generateSettingOption({
+			$element: document.querySelector('#globalShortcut-option .setting-control'),
+			value: ConfigUtil.getConfigItem('globalShortcut', true),
+			clickHandler: () => {
+				const newValue = !ConfigUtil.getConfigItem('globalShortcut');
+				ConfigUtil.setConfigItem('globalShortcut', newValue);
+				ipcRenderer.send('toggle-global-shortcut');
+				this.updateGlobalShortcut();
 			}
 		});
 	}
