@@ -49,6 +49,7 @@ interface SettingsOptions extends DNDSettings {
 	downloadsPath: string;
 	quitOnClose: boolean;
 	promptDownload: boolean;
+	globalShortcut: boolean;
 	dockBouncing?: boolean;
 }
 
@@ -196,7 +197,8 @@ class ServerManagerView {
 			},
 			downloadsPath: `${app.getPath('downloads')}`,
 			quitOnClose: false,
-			promptDownload: false
+			promptDownload: false,
+			globalShortcut: false
 		};
 
 		// Platform specific settings
