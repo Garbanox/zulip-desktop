@@ -27,7 +27,8 @@ function showBadgeCount(messageCount: number, mainWindow: electron.BrowserWindow
 	if (process.platform === 'win32') {
 		if (ConfigUtil.getConfigItem('openToBackgroundFromTray', false)) {
 			if (!mainWindow.isVisible()) {
-				mainWindow.showInactive();
+				mainWindow.minimize();
+				mainWindow.blur();
 			}
 		}
 
