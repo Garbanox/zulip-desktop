@@ -1,25 +1,21 @@
-import electron, {app} from 'electron';
+import electron, {app, Notification} from 'electron';
+import path from 'path';
 
 import * as ConfigUtil from '../../utils/config-util';
+
+const ICON_DIR = '../../../../resources/';
+const APP_ICON = path.join(__dirname, ICON_DIR, 'Icon');
+const iconPath = (): string => APP_ICON + (process.platform === 'win32' ? '.ico' : '.png');
 
 function showBadgeCount(messageCount: number, mainWindow: electron.BrowserWindow): void {
 	if (process.platform === 'linux') {
 		if (ConfigUtil.getConfigItem('popUpOnMessage', false)) {
-			if (mainWindow.isVisible() && !mainWindow.isFocused()) {
-				mainWindow.setVisibleOnAllWorkspaces(true);
-				mainWindow.moveTop();
-				mainWindow.setVisibleOnAllWorkspaces(false);
-			}
-
-			if (!mainWindow.isVisible()) { // When closed to tray or minimized
-				mainWindow.setVisibleOnAllWorkspaces(true);
-				mainWindow.show();
-				mainWindow.once('focus', () => {
-					mainWindow.blur();
-					mainWindow.showInactive();
-					mainWindow.moveTop();
-					mainWindow.setVisibleOnAllWorkspaces(false);
+			if (app.badgeCount === 0 && messageCount > 0) {
+				const persistentNotification = new Notification({title: 'Zulip', body: 'New message', urgency: 'critical', icon: iconPath()});
+				persistentNotification.on('click', () => {
+					mainWindow.show();
 				});
+				persistentNotification.show();
 			}
 		}
 	}
